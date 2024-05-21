@@ -1,41 +1,34 @@
-#Remember to pip3 install numpy
-import numpy as np
+import os
+import shutil
+import sys
 
-def generate_random_array(size):
-    return np.random.randint(0, 10000, size, dtype=int)
+def generate_file(filename, n, saturation=70):
+    with open(filename, 'w') as file:
+        file.write(f"{n}\n{saturation}\n")
 
-def generate_increasing_array(size):
-    return np.arange(size)
+if __name__ == "__main__":
 
-def generate_decreasing_array(size):
-    return np.arange(size, 0, -1)
+    if len(sys.argv) != 3:
+        print("Usage: python generate.py <start_exponent> <end_exponent>")
+        sys.exit(1)
+    try:
+        start_exponent = int(sys.argv[1])
+        end_exponent = int(sys.argv[2])
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Usage: python generate.py <start_exponent> <end_exponent>")
+        sys.exit(1)
 
-def generate_constant_array(size, value=42):
-    return np.full(size, value)
+    # Directory where files will be saved
+    directory = 'benchmark'
 
-def generate_a_shaped_array(size):
-    half_size = size // 2
-    increasing_part = np.arange(half_size)
-    decreasing_part = np.arange(half_size, 0, -1)
-    return np.concatenate((increasing_part, decreasing_part))
+    # Clear the contents of the benchmark directory
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
 
-# Set the sizes for the arrays
-sizes = [2**x for x in range(2, 20)]
-
-for size in sizes:
-    # Generate arrays
-    random_array = generate_random_array(size)
-    increasing_array = generate_increasing_array(size)
-    decreasing_array = generate_decreasing_array(size)
-    constant_array = generate_constant_array(size)
-    a_shaped_array = generate_a_shaped_array(size)
-
-    # Add instance size as the first number and save arrays to files
-    np.savetxt(f'benchmark/random_array_{size:08d}.txt', np.insert(random_array, 0, size), fmt='%d')
-    np.savetxt(f'benchmark/increasing_array_{size:08d}.txt', np.insert(increasing_array, 0, size), fmt='%d')
-    np.savetxt(f'benchmark/decreasing_array_{size:08d}.txt', np.insert(decreasing_array, 0, size), fmt='%d')
-    np.savetxt(f'benchmark/constant_array_{size:08d}.txt', np.insert(constant_array, 0, size), fmt='%d')
-    np.savetxt(f'benchmark/a_shaped_array_{size:08d}.txt', np.insert(a_shaped_array, 0, size), fmt='%d')
-
-
-print("Arrays have been generated and saved to files.")
+    max_n_length = len(str(2 ** end_exponent))  # Determine the length of the largest n
+    for i in range(start_exponent, end_exponent + 1):
+        n = 2 ** i
+        filename = os.path.join(directory, f"generate.{n:0{max_n_length}}")
+        generate_file(filename, n)
