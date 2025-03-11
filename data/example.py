@@ -1,4 +1,5 @@
 import sys
+import random 
 
 def insertion_sort(data):
     for j in range(len(data) - 1):
@@ -53,6 +54,54 @@ def heap_sort(data):
         data[i], data[0] = data[0], data[i]
         heapify(data, i, 0)
 
+def quick_sort_left_pivot(data):
+    def partition(data, low, high): 
+        i = high + 1 
+        pivot = data[low] 
+ 
+        for j in range(high, low, -1): 
+            if data[j] > pivot: 
+                i -= 1 
+                data[i], data[j] = data[j], data[i] 
+ 
+        data[i - 1], data[low] = data[low], data[i - 1] 
+        return i - 1 
+ 
+    def quick_sort_rec(data, low, high): 
+        if low < high: 
+            pi = partition(data, low, high) 
+            quick_sort_rec(data, low, pi - 1) 
+            quick_sort_rec(data, pi + 1, high) 
+             
+             
+ 
+    quick_sort_rec(data, 0, len(data) - 1) 
+ 
+def quick_sort_random_pivot(data):
+    def partition(data, low, high): 
+        i = high + 1 
+        pivot_index = random.randint(low, high) 
+        data[low], data[pivot_index] = data[pivot_index], data[low] 
+        pivot = data[low] 
+ 
+        for j in range(high, low, -1): 
+            if data[j] > pivot: 
+                i -= 1 
+                data[i], data[j] = data[j], data[i] 
+ 
+        data[i - 1], data[low] = data[low], data[i - 1] 
+        return i - 1 
+ 
+    def quick_sort_rec(data, low, high): 
+        if low < high: 
+            pi = partition(data, low, high) 
+            quick_sort_rec(data, low, pi - 1) 
+            quick_sort_rec(data, pi + 1, high) 
+             
+             
+ 
+    quick_sort_rec(data, 0, len(data) - 1)
+
 def sort_using_algorithm(data, algorithm):
     # This function takes the algorithm identifier as input
     # However, it always uses the sorted function in Python
@@ -66,9 +115,9 @@ def sort_using_algorithm(data, algorithm):
     elif algorithm == 4:
         heap_sort(data)
     elif algorithm == 5:
-        shell_sort(data)
+        quick_sort_left_pivot(data)
     elif algorithm == 6:
-        shell_sort(data)
+        quick_sort_random_pivot(data)
 
     return data
 
